@@ -1,8 +1,19 @@
-export default function Home() {
+import Hero from "@/components/home/Hero";
+import RitualRail from "@/components/home/RitualRail";
+import CollectionCards from "@/components/home/CollectionCards";
+import StoryStrip from "@/components/home/StoryStrip";
+import JournalPreview from "@/components/home/JournalPreview";
+import EmailBar from "@/components/home/EmailBar";
+
+export default function HomePage() {
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center">
-      <h1 className="text-5xl font-heading mb-4">Welcome to Paz Glow</h1>
-      <p className="text-soil/80">Rituals for radiant skin begin here.</p>
-    </section>
+    <>
+      <Hero />
+      <RitualRail />
+      <CollectionCards />
+      <StoryStrip />
+      <JournalPreview />
+      <EmailBar />
+    </>
   );
 }

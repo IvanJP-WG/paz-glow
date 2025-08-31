@@ -1,30 +1,43 @@
-"use client";
-
 import Link from "next/link";
+import { Facebook, Instagram, Twitter } from "lucide-react";
 
-export default function Header() {
+export function SiteFooter() {
   return (
-    <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-heading text-clay">
-          Paz Glow
-        </Link>
+    <footer className="bg-soil text-sand mt-20">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {/* Navigation */}
+        <nav className="flex flex-col md:flex-row md:justify-between items-center gap-6 text-sm">
+          <div className="flex space-x-8">
+            <Link href="/contact" className="hover:text-clay transition">
+              Contact
+            </Link>
+            <Link href="/shipping" className="hover:text-clay transition">
+              Shipping & Returns
+            </Link>
+            <Link href="/faq" className="hover:text-clay transition">
+              FAQ
+            </Link>
+          </div>
 
-        {/* Nav */}
-        <nav className="hidden md:flex space-x-6 font-sans text-sm text-soil">
-          <Link href="/shop" className="hover:text-clay transition">Shop</Link>
-          <Link href="/rituals" className="hover:text-clay transition">Rituals</Link>
-          <Link href="/about" className="hover:text-clay transition">About</Link>
-          <Link href="/contact" className="hover:text-clay transition">Contact</Link>
+          {/* Socials under Contact */}
+          <div className="flex space-x-6">
+            <Link href="https://facebook.com" target="_blank" className="hover:text-clay transition">
+              <Facebook className="w-5 h-5" />
+            </Link>
+            <Link href="https://instagram.com" target="_blank" className="hover:text-clay transition">
+              <Instagram className="w-5 h-5" />
+            </Link>
+            <Link href="https://twitter.com" target="_blank" className="hover:text-clay transition">
+              <Twitter className="w-5 h-5" />
+            </Link>
+          </div>
         </nav>
 
-        {/* Utility */}
-        <div className="flex items-center space-x-4">
-          <button aria-label="Search" className="hover:text-clay transition">🔍</button>
-          <button aria-label="Cart" className="hover:text-clay transition">🛒</button>
+        {/* Copyright */}
+        <div className="mt-8 text-xs text-center text-sand/70">
+          © {new Date().getFullYear()} Paz Glow. All rights reserved.
         </div>
       </div>
-    </header>
+    </footer>
   );
 }

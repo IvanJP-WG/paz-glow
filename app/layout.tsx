@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Cinzel, Inter, IBM_Plex_Mono } from "next/font/google";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import { SiteHeader } from "@/components/layout/Header";
+import { SiteFooter } from "@/components/layout/Footer";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -53,9 +53,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cinzel.variable} ${inter.variable} ${plexMono.variable} font-sans bg-sand text-soil`}
-      >
-        {children}
+        className={`${cinzel.variable} ${inter.variable} ${plexMono.variable} font-sans bg-sand text-soil`}>
+          <SiteHeader />
+          <main className="pt-20">{children}</main>
+          <SiteFooter />
       </body>
     </html>
   );
