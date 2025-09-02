@@ -43,8 +43,14 @@ export default function Filters({ onChange }: FilterProps) {
     onChange(newFilters);
   };
 
+  const clearFilters = () => {
+    setFilters(initialFilters);
+    onChange(initialFilters);
+  };
+
   return (
     <aside className="w-72 p-6 bg-sand rounded-2xl shadow-md">
+      <div>
       <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
       {Object.entries(options).map(([key, values]) => (
@@ -65,6 +71,13 @@ export default function Filters({ onChange }: FilterProps) {
           </div>
         </div>
       ))}
+      </div>
+      <button
+        onClick={clearFilters}
+        className="mt-4 w-full py-2 bg-soil text-white rounded-lg hover:bg-clay transition"
+      >
+        Remove All Filters
+      </button>
     </aside>
   );
 }

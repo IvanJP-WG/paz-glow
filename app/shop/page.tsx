@@ -1,109 +1,106 @@
+// /app/shop/page.tsx
+
 "use client";
 
 import { useState } from "react";
-import Filters from "@/components/shop/Filters";
-import SortDropdown from "@/components/shop/SortDropdown";
+import { products } from "@/lib/products";
 import ProductCard from "@/components/shop/ProductCard";
-
-type ShopFilters = {
-  concern: string[];
-  category: string[];
-  vegan: string[];
-  fragranceFree: string[];
-};
-
-
-const sampleProducts = [
-  {
-    id: 1,
-    title: "Rosewater Illuminating Mist",
-    category: "Cleansers",
-    concern: ["Dullness", "Sensitivity"],
-    vegan: "Yes",
-    fragranceFree: "Yes",
-    price: "$28",
-    image: "/images/product-rosewater.jpg",
-  },
-  {
-    id: 2,
-    title: "Olive Oil Infinity Elixir",
-    category: "Moisturizers",
-    concern: ["Dryness"],
-    vegan: "Yes",
-    fragranceFree: "No",
-    price: "$45",
-    image: "/images/product-olive-oil.jpg",
-  },
-  // Add more sample products
-];
+import Filters from "@/components/shop/Filters";
 
 export default function ShopPage() {
-  const [filters, setFilters] = useState<ShopFilters>({
-  concern: [],
-  category: [],
-  vegan: [],
-  fragranceFree: [],
-    });
+  // filters
+  const [filters, setFilters] = useState<{
+    concern: string[];
+    category: string[];
+    vegan: string[];
+    fragranceFree: string[];
+  }>({
+    concern: [],
+    category: [],
+    vegan: [],
+    fragranceFree: [],
+  });
+
+  // sorting
   const [sortMethod, setSortMethod] = useState("best-selling");
 
-const handleFilterChange = (updatedFilters: ShopFilters) => {
-  setFilters(updatedFilters);
-};
-
-const handleSortChange = (method: string) => {
-    setSortMethod(method);
-  };
-
-  // Filter logic
-  const filteredProducts = sampleProducts.filter((p) => {
+  // filtering logic
+  const filteredProducts = products.filter((p) => {
+    // concern: product.concern must match one of selected concerns
     const concernMatch =
-      filters.concern.length === 0 || p.concern.some((c: string) => filters.concern.includes(c));
+      filters.concern.length === 0 ||
+      filters.concern.some((c) => p.concern.includes(c));
+
+    // category: must match product.category
     const categoryMatch =
       filters.category.length === 0 || filters.category.includes(p.category);
+
+    // vegan: map "Yes"/"No" to boolean check
     const veganMatch =
-      filters.vegan.length === 0 || filters.vegan.includes(p.vegan);
+      filters.vegan.length === 0 ||
+      (filters.vegan.includes("Yes") && p.vegan) ||
+      (filters.vegan.includes("No") && !p.vegan);
+
+    // fragrance free: same logic as vegan
     const fragranceMatch =
-      filters.fragranceFree.length === 0 || filters.fragranceFree.includes(p.fragranceFree);
+      filters.fragranceFree.length === 0 ||
+      (filters.fragranceFree.includes("Yes") && p.fragranceFree) ||
+      (filters.fragranceFree.includes("No") && !p.fragranceFree);
 
     return concernMatch && categoryMatch && veganMatch && fragranceMatch;
   });
 
-const sortedProducts = [...filteredProducts].sort((a, b) => {
+  // sorting logic
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortMethod) {
       case "price-low":
-        return parseFloat(a.price.slice(1)) - parseFloat(b.price.slice(1));
+        return a.price - b.price;
       case "price-high":
-        return parseFloat(b.price.slice(1)) - parseFloat(a.price.slice(1));
+        return b.price - a.price;
       case "newest":
-        return b.id - a.id; // assuming higher ID = newer
+        return b.id - a.id; // higher id = newer
       case "best-selling":
       default:
-        return 0; // placeholder, integrate with sales data later
+        return 0; // placeholder, you can add sales data later
     }
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
-      <Filters onChange={handleFilterChange} />
-      <div>
-        <SortDropdown onChange={handleSortChange} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedProducts.map((p) => (
-                <ProductCard
-                key={p.id}
-                id={p.id}
-                title={p.title}
-                price={p.price}
-                image={p.image}
-                badge={p.concern[0]} // optional: show first concern as badge
-                href={`/shop/${p.id}`}
-                />
-            ))}
-            {sortedProducts.length === 0 && (
-                <p className="text-soil col-span-full">No products match these filters.</p>
-            )}
+    <main className="px-6 py-12">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Shop Rituals</h1>
+        <select
+          value={sortMethod}
+          onChange={(e) => setSortMethod(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="best-selling">Best Selling</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+
+      <div className="flex gap-8">
+        {/* sidebar filters */}
+        <Filters onChange={setFilters} />
+
+        {/* products grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 flex-1 auto-rows-fr">
+          {sortedProducts.map((p) => (
+            <ProductCard
+              key={p.id}
+              id={p.id}
+              title={p.title}
+              price={`${p.price}`}
+              rating={p.rating}
+              reviewsCount={p.reviewsCount}
+              image={p.images[0]}
+              className="h-[400px]"
+            />
+          ))}
         </div>
-    </div>
-    </div>
+      </div>
+    </main>
   );
 }
