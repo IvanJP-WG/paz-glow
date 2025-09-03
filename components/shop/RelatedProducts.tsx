@@ -26,7 +26,7 @@ export default function RelatedProducts({ ids }: RelatedProductsProps) {
             key={p.id}
             id={p.id}
             title={p.title}
-            price={`$${p.price}`} // format price
+            price={`${p.price}`} // format price
             image={p.images[0]}   // ✅ use first image from array
           />
         ))}

@@ -1,41 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
-import type { Product } from "@/lib/products";
-import { products } from "@/lib/products";
 
-interface ProductReviewsProps {
-  productId: number;
-  reviews: Product["reviews"];
+interface Review {
+  _id?: string;
+  user: string;
+  comment: string;
+  stars: number;
+  createdAt?: string;
 }
 
-export default function ProductReviews({ productId, reviews }: ProductReviewsProps) {
+interface ProductReviewsProps {
+  productId: string; // Sanity _id, stored as string
+}
+
+export default function ProductReviews({ productId }: ProductReviewsProps) {
   const [visibleCount, setVisibleCount] = useState(5);
-  const [currentReviews, setCurrentReviews] = useState(reviews);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [userName, setUserName] = useState("");
   const [comment, setComment] = useState("");
   const [stars, setStars] = useState(5);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch reviews from API
+  useEffect(() => {
+    async function fetchReviews() {
+      try {
+        const res = await fetch(`/api/reviews?productId=${String(productId)}`);
+        const data = await res.json();
+        setReviews(data);
+      } catch (err) {
+        console.error("Failed to fetch reviews:", err);
+      }
+    }
+    fetchReviews();
+  }, [productId]);
 
   const handleViewMore = () => {
     setVisibleCount((prev) => prev + 5);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newReview = { user: userName || "Anonymous", comment, stars };
-    // Update local state
-    setCurrentReviews((prev) => [newReview, ...prev]);
-    // Optionally update lib/products.ts array (for demo)
-    const product = products.find((p) => p.id === productId);
-    if (product) {
-      product.reviews.unshift(newReview);
-      product.reviewsCount = product.reviews.length;
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: String(productId), // ✅ always send as string
+          user: userName || "Anonymous",
+          comment,
+          stars,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit review");
+
+      const newReview = await res.json();
+      setReviews((prev) => [newReview, ...prev]); // update UI instantly
+      setUserName("");
+      setComment("");
+      setStars(5);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    // Reset form
-    setUserName("");
-    setComment("");
-    setStars(5);
   };
 
   return (
@@ -43,37 +76,49 @@ export default function ProductReviews({ productId, reviews }: ProductReviewsPro
       <h2 className="text-xl font-heading mb-4">Customer Reviews</h2>
 
       {/* Reviews List */}
-      <div className="space-y-6">
-        {currentReviews.slice(0, visibleCount).map((review, idx) => (
-          <div
-            key={idx}
-            className="border border-gray-200 rounded-xl p-4 shadow-sm bg-white"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <p className="font-medium">{review.user}</p>
-              <span className="text-xs text-gray-500">Recently</span>
+      {reviews.length === 0 ? (
+        <p className="text-sm text-soil/70 italic">
+          No reviews yet. Be the first to review!
+        </p>
+      ) : (
+        <div className="space-y-6">
+          {reviews.slice(0, visibleCount).map((review) => (
+            <div
+              key={review._id || review.user + review.comment}
+              className="border border-gray-200 rounded-xl p-4 shadow-sm bg-white"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-medium">{review.user}</p>
+                <span className="text-xs text-gray-500">
+                  {review.createdAt
+                    ? new Date(review.createdAt).toLocaleDateString()
+                    : "Recently"}
+                </span>
+              </div>
+              <div className="flex mb-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-4 h-4 ${
+                      i < review.stars
+                        ? "fill-clay text-clay"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-soil/80">{review.comment}</p>
             </div>
-            <div className="flex mb-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${
-                    i < review.stars ? "fill-clay text-clay" : "text-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-            <p className="text-sm text-soil/80">{review.comment}</p>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* View More */}
-      {visibleCount < currentReviews.length && (
+      {visibleCount < reviews.length && (
         <div className="flex justify-center mt-6">
           <button
             onClick={handleViewMore}
-            className="px-4 py-2 bg-clay text-white rounded-full text-sm hover:bg-soil hover:text-white transition"
+            className="px-4 py-2 bg-clay text-white rounded-full text-sm hover:bg-soil transition"
           >
             View More
           </button>
@@ -112,9 +157,10 @@ export default function ProductReviews({ productId, reviews }: ProductReviewsPro
           <div className="flex justify-center">
             <button
               type="submit"
-              className="px-6 py-2 bg-clay text-white rounded-full hover:bg-soil hover:text-white transition"
+              disabled={loading}
+              className="px-6 py-2 bg-clay text-white rounded-full hover:bg-soil transition disabled:opacity-50"
             >
-              Submit Review
+              {loading ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </form>
