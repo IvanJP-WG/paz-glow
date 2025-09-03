@@ -11,6 +11,7 @@ import IngredientsTabs from "@/components/shop/IngredientsTabs";
 import ProductReviews from "@/components/shop/ProductReviews";
 import RelatedProducts from "@/components/shop/RelatedProducts";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion"; // 👈 Import motion
 
 interface PDPProps {
   params: Promise<{
@@ -21,7 +22,6 @@ interface PDPProps {
 export default function PDP({ params }: PDPProps) {
   const { id } = use(params);
   const idNum = Number(id);
-  const productId = parseInt(id);
   const product = products.find((p) => p.id === idNum);
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
@@ -41,88 +41,110 @@ export default function PDP({ params }: PDPProps) {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* GALLERY */}
-      <div className="order-1 lg:order-1">
-        <ProductGallery images={product.images} />
-      </div>
-
-      {/* PRODUCT INFO (right column on desktop, under gallery on mobile) */}
-      <div className="order-2 lg:order-2 flex flex-col gap-6 relative">
-        <button
-          className="absolute top-0 right-0 text-clay hover:text-gold font-medium"
-          onClick={() => router.push("/shop")}
+    <motion.main
+      className="max-w-7xl mx-auto px-6 py-12 flex flex-col gap-10"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      {/* ROW 1: Gallery + Product Info */}
+      <motion.div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-12"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+      >
+        {/* Gallery */}
+        <motion.section
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
         >
-          ← Back to Shop
-        </button>
+          <ProductGallery images={product.images} />
+        </motion.section>
 
-        <h1 className="text-3xl font-heading">{product.title}</h1>
-        <p className="text-xl text-soil font-semibold">${product.price}</p>
-
-        {/* Rating */}
-        <div className="flex items-center gap-2">
-          <span className="flex items-center text-gold">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={20}
-                className={
-                  i < Math.round(product.rating)
-                    ? "text-gold fill-gold"
-                    : "text-sand"
-                }
-              />
-            ))}
-          </span>
-          <span className="text-soil text-sm">
-            ({product.reviewsCount} reviews)
-          </span>
-        </div>
-
-        <p className="text-soil">{product.keyMessaging}</p>
-
-        {/* Quantity */}
-        <div className="flex items-center gap-4">
-          <label className="text-soil font-medium">Quantity:</label>
-          <input
-            type="number"
-            min={1}
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            className="w-16 border rounded-lg px-2 py-1 focus:ring-2 focus:ring-gold focus:outline-none"
-          />
-        </div>
-
-        {/* Add to cart */}
-        <Button
-          className="bg-clay text-white hover:bg-gold hover:text-soil w-full transition-colors"
-          onClick={() =>
-            alert(`Added ${quantity} × ${product.title} to cart`)
-          }
+        {/* Product Info */}
+        <motion.section
+          className="flex flex-col gap-6 relative"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
         >
-          Add to Cart
-        </Button>
-      </div>
+          <button
+            className="absolute top-0 right-0 text-clay hover:text-gold font-medium"
+            onClick={() => router.push("/shop")}
+          >
+            ← Back to Shop
+          </button>
 
-      {/* RITUAL */}
-      <div className="order-3 lg:order-2">
-        <RitualAccordion steps={product.ritual} />
-      </div>
+          <h1 className="text-3xl font-heading">{product.title}</h1>
+          <p className="text-xl text-soil font-semibold">${product.price}</p>
 
-      {/* INGREDIENTS */}
-      <div className="order-4 lg:order-2">
-        <IngredientsTabs ingredients={product.ingredients} />
-      </div>
+          {/* Rating */}
+          <div className="flex items-center gap-2">
+            <span className="flex items-center text-gold">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  size={20}
+                  className={i < Math.round(product.rating) ? "text-gold fill-gold" : "text-sand"}
+                />
+              ))}
+            </span>
+            <span className="text-soil text-sm">({product.reviewsCount} reviews)</span>
+          </div>
 
-      {/* RELATED PRODUCTS */}
-      <div className="order-5 lg:order-2">
-        <RelatedProducts ids={product.related} />
-      </div>
+          <p className="text-soil">{product.keyMessaging}</p>
 
-      {/* REVIEWS (last on mobile, under gallery on desktop) */}
-      <div className="order-6 lg:order-1">
-        <ProductReviews productId={String(product.id)} />
-      </div>
-    </main>
+          {/* Quantity */}
+          <div className="flex items-center gap-4">
+            <label className="text-soil font-medium">Quantity:</label>
+            <input
+              type="number"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="w-16 border rounded-lg px-2 py-1 focus:ring-2 focus:ring-gold focus:outline-none"
+            />
+          </div>
+
+          {/* Add to cart */}
+          <Button
+            className="bg-clay text-white hover:bg-gold hover:text-soil w-full transition-colors"
+            onClick={() => alert(`Added ${quantity} × ${product.title} to cart`)}
+          >
+            Add to Cart
+          </Button>
+        </motion.section>
+      </motion.div>
+
+      {/* ROW 2: Rituals → Ingredients → Related → Reviews */}
+      <motion.div
+        className="flex flex-col gap-10"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 40 },
+          visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } },
+        }}
+      >
+        <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+          <RitualAccordion steps={product.ritual} />
+        </motion.div>
+
+        <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+          <IngredientsTabs ingredients={product.ingredients} />
+        </motion.div>
+
+        <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+          <RelatedProducts ids={product.related} />
+        </motion.div>
+
+        <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+          <ProductReviews productId={String(product.id)} />
+        </motion.div>
+      </motion.div>
+    </motion.main>
   );
 }
