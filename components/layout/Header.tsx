@@ -73,30 +73,55 @@ export function SiteHeader() {
       </div>
 
       {/* Mobile Nav Drawer */}
-      {mobileOpen && (
-        <div className="md:hidden bg-sand/95 backdrop-blur shadow-card">
-          <nav className="flex flex-col space-y-4 px-6 py-6 font-sans text-soil text-base">
-            <Link href="/shop" onClick={() => setMobileOpen(false)}>
-              Shop
-            </Link>
-            <Link href="/rituals" onClick={() => setMobileOpen(false)}>
-              Rituals
-            </Link>
-            <Link href="/ingredients" onClick={() => setMobileOpen(false)}>
-              Ingredients
-            </Link>
-            <Link href="/about" onClick={() => setMobileOpen(false)}>
-              Our Story
-            </Link>
-            <Link href="/journals" onClick={() => setMobileOpen(false)}>
-              Journals
-            </Link>
-            <Link href="/account" onClick={() => setMobileOpen(false)}>
-              Account
-            </Link>
-          </nav>
-        </div>
-      )}
+{mobileOpen && (
+  <div className="md:hidden bg-sand/95 backdrop-blur shadow-card">
+    <nav className="flex flex-col space-y-4 px-6 py-6 font-sans text-soil text-base">
+      <Link
+        href="/shop"
+        onClick={() => setMobileOpen(false)}
+        className="hover:text-clay transition"
+      >
+        Shop
+      </Link>
+      <Link
+        href="/rituals"
+        onClick={() => setMobileOpen(false)}
+        className="hover:text-clay transition"
+      >
+        Rituals
+      </Link>
+      <Link
+        href="/ingredients"
+        onClick={() => setMobileOpen(false)}
+        className="hover:text-clay transition"
+      >
+        Ingredients
+      </Link>
+      <Link
+        href="/about"
+        onClick={() => setMobileOpen(false)}
+        className="hover:text-clay transition"
+      >
+        Our Story
+      </Link>
+      <Link
+        href="/journals"
+        onClick={() => setMobileOpen(false)}
+        className="hover:text-clay transition"
+      >
+        Journals
+      </Link>
+      <Link
+        href="/account"
+        onClick={() => setMobileOpen(false)}
+        className="hover:text-clay transition"
+      >
+        Account
+      </Link>
+    </nav>
+  </div>
+)}
+
     </header>
   );
 }
