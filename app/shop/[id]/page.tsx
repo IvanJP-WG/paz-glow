@@ -21,7 +21,7 @@ interface PDPProps {
 export default function PDP({ params }: PDPProps) {
   const { id } = use(params);
   const idNum = Number(id);
-  const productId = parseInt (id);
+  const productId = parseInt(id);
   const product = products.find((p) => p.id === idNum);
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
@@ -30,7 +30,10 @@ export default function PDP({ params }: PDPProps) {
     return (
       <main className="max-w-4xl mx-auto px-6 py-20 text-center">
         <h2 className="text-2xl font-heading mb-4">Product not found</h2>
-        <Button onClick={() => router.push("/shop")} className="bg-clay text-white hover:bg-gold hover:text-soil">
+        <Button
+          onClick={() => router.push("/shop")}
+          className="bg-clay text-white hover:bg-gold hover:text-soil"
+        >
           Back to Shop
         </Button>
       </main>
@@ -39,14 +42,13 @@ export default function PDP({ params }: PDPProps) {
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* LEFT COLUMN */}
-      <div className="flex flex-col gap-8">
+      {/* GALLERY */}
+      <div className="order-1 lg:order-1">
         <ProductGallery images={product.images} />
-        <ProductReviews productId={product.id} reviews={product.reviews} />
       </div>
 
-      {/* RIGHT COLUMN */}
-      <div className="flex flex-col gap-6 relative">
+      {/* PRODUCT INFO (right column on desktop, under gallery on mobile) */}
+      <div className="order-2 lg:order-2 flex flex-col gap-6 relative">
         <button
           className="absolute top-0 right-0 text-clay hover:text-gold font-medium"
           onClick={() => router.push("/shop")}
@@ -100,15 +102,26 @@ export default function PDP({ params }: PDPProps) {
         >
           Add to Cart
         </Button>
+      </div>
 
-        {/* Ritual instructions */}
+      {/* RITUAL */}
+      <div className="order-3 lg:order-2">
         <RitualAccordion steps={product.ritual} />
+      </div>
 
-        {/* Ingredients tabs */}
+      {/* INGREDIENTS */}
+      <div className="order-4 lg:order-2">
         <IngredientsTabs ingredients={product.ingredients} />
+      </div>
 
-        {/* Related products */}
+      {/* RELATED PRODUCTS */}
+      <div className="order-5 lg:order-2">
         <RelatedProducts ids={product.related} />
+      </div>
+
+      {/* REVIEWS (last on mobile, under gallery on desktop) */}
+      <div className="order-6 lg:order-1">
+        <ProductReviews productId={String(product.id)} />
       </div>
     </main>
   );
