@@ -8,17 +8,15 @@ const slides = [
   {
     id: 1,
     title: "Natural Ritual Scene",
-    subtitle:
-      "Woman practicing morning skincare ritual with natural light streaming in, featuring Rosewater Mist and Elixir Oils on wooden surface.",
+    subtitle: "Gentle cleansers and toners inspired by earth’s purity.",
     cta: "Shop Ritual Cleansers & Toners",
     href: "/shop",
-    image: "/images/hero-1.jpg",
+    image: "/images/hero-1.png",
   },
   {
     id: 2,
     title: "Ingredient Sourcing Story",
-    subtitle:
-      "Landscape shot of olive groves representing sourcing practices, with inset product shots featuring key ingredients.",
+    subtitle: "Every ritual starts with responsibly sourced botanicals.",
     cta: "Explore Hydration & Nourishment",
     href: "/shop",
     image: "/images/hero-2.jpg",
@@ -26,27 +24,25 @@ const slides = [
   {
     id: 3,
     title: "Diversity Celebration",
-    subtitle:
-      "Grid collage of diverse skin tones (all ages, ethnicities) glowing with health, showcasing our 'Glow for All' philosophy.",
+    subtitle: "Skincare that honors every shade, tone, and glow.",
     cta: "Find Your Glow",
     href: "#ritual-by-concern",
-    image: "/images/hero-3.jpg",
+    image: "/images/hero-3.png",
   },
   {
     id: 4,
     title: "Transformation Journey",
-    subtitle:
-      "Split image showing before (dull skin) and after (radiant glow) with key products featured in between.",
+    subtitle: "From ritual to radiance, elevate your skin’s natural story.",
     cta: "Shop Radiance Enhancers",
     href: "/shop",
-    image: "/images/hero-4.jpg",
+    image: "/images/hero-4.png",
   },
 ];
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
 
-  // Auto slide every 5s
+  // Auto slide every 10s
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % slides.length);
@@ -78,21 +74,23 @@ export default function Hero() {
           {/* Text */}
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
             <motion.h1
-              className="text-4xl md:text-6xl font-heading mb-4"
+              className="text-4xl md:text-6xl font-heading mb-4 text-sand"
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
               {slide.title}
             </motion.h1>
+
             <motion.p
-              className="text-lg md:text-xl mb-6 max-w-xl"
+              className="text-lg md:text-xl mb-6 max-w-xl text-cream"
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               {slide.subtitle}
             </motion.p>
+
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
